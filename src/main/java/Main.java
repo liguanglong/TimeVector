@@ -50,9 +50,9 @@ public class Main {
         double[] result = new double[24 * 6 + 4 + 7];
 
         /**
-         * 开始时间向量
+         * 开始时间特征向量
          * 时间粒度为10分钟
-         * 数组从零点10分开始
+         * 数组从零点10分开始，既数组第一个元素代表的是0点10分
          */
         double[] startTimeVector = new double[24 * 6];
         String startTimeHour = "";
@@ -101,6 +101,7 @@ public class Main {
 
         /**
          * 周几
+         * 0是星期一，1是星期二，。。。。。。
          */
 
         double[] weekVetor = new double[7];
@@ -131,7 +132,7 @@ public class Main {
 
         System.out.println("week" + Arrays.toString(weekVetor));
 
-        //拼接
+        //拼接数组
         result = ArrayUtils.addAll(startTimeVector, durationVetor);
         result = ArrayUtils.addAll(result, weekVetor);
 
