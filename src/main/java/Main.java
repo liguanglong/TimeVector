@@ -1,8 +1,6 @@
 import org.apache.commons.lang3.ArrayUtils;
 
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.*;
 
 /**
  * @author LiGuanglong
@@ -27,23 +25,24 @@ public class Main {
         Calendar endCal = Calendar.getInstance();
         endCal.set(2018,Calendar.MAY,13,10,0);
 
-        System.out.println(TimeUtils.calDistanceInMinutes(startCal.getTime(),endCal.getTime()));
+//        System.out.println(TimeUtils.calDistanceInMinutes(startCal.getTime(),endCal.getTime()));
 
         Schedule schedule = new Schedule(startCal,endCal);
 
         TimeFeature timeFeature  = new TimeFeature(schedule.getStartTime(),
                 (int)TimeUtils.calDistanceInMinutes(schedule.getStartTime().getTime(),schedule.getEndTime().getTime()),
                 schedule.getEndTime().get(Calendar.WEEK_OF_MONTH));
+
         double[] v1 = vector(timeFeature);
 
-        System.out.println(parserTimeVetor(v1));
+        System.out.println(parserVectorToFeature(v1));
 
 
 //        System.out.println(timeFeature.getStartTimeStr());
 //        double[] v4 = vector(timeFeature);
 
 
-
+        int a = 1;
 
 //        System.out.println("time:" + parserTimeVetor(v4 ));
 
@@ -52,13 +51,29 @@ public class Main {
 //        System.out.println(cosineSimilarity(v1, v3));
 
 
-
-        System.out.println("aaa\\n");
-        System.out.println("bbb");
-
-
     }
 
+
+    /**
+     * 产生日程列表，既产生非空闲时间
+     * @return
+     */
+    public static Map<Integer,List<Schedule>> genSchedule(){
+        Map<Integer,List<Schedule>> listMap = new HashMap<Integer, List<Schedule>>(16);
+        Calendar startCal = Calendar.getInstance();
+        startCal.set(2018,Calendar.MAY,13,8,30);
+        Calendar endCal = Calendar.getInstance();
+        endCal.set(2018,Calendar.MAY,13,10,0);
+
+        return listMap;
+    }
+
+
+    /**
+     * 产生时间特征向量
+     * @param timeFeature
+     * @return
+     */
     private static double[] vector(TimeFeature timeFeature) {
         String startTime = timeFeature.getStartTimeStr();
         String duration = String.valueOf(timeFeature.getDuration());
@@ -162,6 +177,12 @@ public class Main {
     }
 
 
+    /**
+     * 计算两个向量的相似度
+     * @param vectorA
+     * @param vectorB
+     * @return
+     */
     public static double cosineSimilarity(double[] vectorA, double[] vectorB) {
         double dotProduct = 0.0;
         double normA = 0.0;
@@ -175,7 +196,12 @@ public class Main {
     }
 
 
-    public static String parserTimeVetor(double[] timeVetor) {
+    /**
+     * 解析时间特征向量
+     * @param timeVetor
+     * @return
+     */
+    public static String parserVectorToFeature(double[] timeVetor) {
         String result = "";
         double[] startTimeVetor = new double[24 * 6];
         double[] durationVetor = new double[4];
