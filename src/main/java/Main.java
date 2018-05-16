@@ -1,6 +1,7 @@
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.awt.datatransfer.StringSelection;
+import java.sql.Time;
 import java.util.*;
 
 /**
@@ -37,24 +38,37 @@ public class Main {
 //        System.out.println(parserVectorToFeature(v1));
 
 
+        Integer a = 1;
+        a = 3;
+        if(a ==3){
+            System.out.println("true");
+
+        }else
+        {
+            System.out.println("false");
+        }
 //        testFreeTime();
-
-        System.out.println("q34"+"\r\n"+"asdf");
-
-
 
     }
 
     public static void testFreeTime() {
-        Calendar startCal = Calendar.getInstance();
-        startCal.set(2018, Calendar.MAY, 13, 8, 0);
-        Calendar endCal = Calendar.getInstance();
-        endCal.set(2018, Calendar.MAY, 13, 22, 0);
+//        Calendar startCal = Calendar.getInstance();
+//        startCal.set(2018, Calendar.MAY, 13, 8, 0);
+
+        Calendar startCal = TimeUtils.getMondayAndAdd(0);
+
+        Calendar endCal = TimeUtils.getMondayAndAdd(6);
+
+//        System.out.println("endCal:"+endCal.getTime());
+
+//        Calendar endCal = Calendar.getInstance();
+//        endCal.set(2018, Calendar.MAY, 13, 22, 0);
 
         FreeTime freeTime = new FreeTime();
         int startWeek = 0;
         int endWeek = 6;
-        Map<Integer, List<Schedule>> listMap = freeTime.getAllTime(startCal, endCal, startWeek, endWeek, 30);
+        Map<Integer, List<Schedule>> listMap = freeTime.getAllTime(startCal, endCal, startWeek,
+                endWeek, 30);
 
         for (int i = startWeek; i < endWeek; i++) {
             List<Schedule> schedules = listMap.get(i);

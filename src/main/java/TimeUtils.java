@@ -57,16 +57,15 @@ public class TimeUtils {
      * @param n
      * @return
      */
-    public static Calendar getMonday(int n) {
+    public static Calendar getMondayAndAdd(int n) {
         Calendar calendar = getMondayCalendar();
 
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-        calendar.add(Calendar.DAY_OF_YEAR, n * 7);
+        calendar.add(Calendar.DAY_OF_YEAR, n );
         return calendar;
-
     }
 
     /**
