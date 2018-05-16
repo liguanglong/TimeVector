@@ -37,7 +37,10 @@ public class Main {
 //        System.out.println(parserVectorToFeature(v1));
 
 
-        testFreeTime();
+//        testFreeTime();
+
+        System.out.println("q34"+"\r\n"+"asdf");
+
 
 
     }
