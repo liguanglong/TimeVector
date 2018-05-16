@@ -1,5 +1,6 @@
 import org.apache.commons.lang3.ArrayUtils;
 
+import java.awt.datatransfer.StringSelection;
 import java.util.*;
 
 /**
@@ -20,50 +21,60 @@ public class Main {
 //        double[] v2 = vector(s2);
 
 
+//        Calendar startCal = Calendar.getInstance();
+//        startCal.set(2018,Calendar.MAY,13,8,30);
+//        Calendar endCal = Calendar.getInstance();
+//        endCal.set(2018,Calendar.MAY,13,10,0);
+//
+//        Schedule schedule = new Schedule(startCal,endCal);
+//
+//        TimeFeature timeFeature  = new TimeFeature(schedule.getStartTime(),
+//                (int)TimeUtils.calDistanceInMinutes(schedule.getStartTime().getTime(),schedule.getEndTime().getTime()),
+//                schedule.getEndTime().get(Calendar.WEEK_OF_MONTH));
+//
+//        double[] v1 = vector(timeFeature);
+//
+//        System.out.println(parserVectorToFeature(v1));
+
+
+        testFreeTime();
+
+
+    }
+
+    public static void testFreeTime() {
         Calendar startCal = Calendar.getInstance();
-        startCal.set(2018,Calendar.MAY,13,8,30);
+        startCal.set(2018, Calendar.MAY, 13, 8, 0);
         Calendar endCal = Calendar.getInstance();
-        endCal.set(2018,Calendar.MAY,13,10,0);
+        endCal.set(2018, Calendar.MAY, 13, 22, 0);
 
-//        System.out.println(TimeUtils.calDistanceInMinutes(startCal.getTime(),endCal.getTime()));
+        FreeTime freeTime = new FreeTime();
+        int startWeek = 0;
+        int endWeek = 6;
+        Map<Integer, List<Schedule>> listMap = freeTime.getAllTime(startCal, endCal, startWeek, endWeek, 30);
 
-        Schedule schedule = new Schedule(startCal,endCal);
+        for (int i = startWeek; i < endWeek; i++) {
+            List<Schedule> schedules = listMap.get(i);
+            for (Schedule s : schedules) {
+                System.out.println(s.getStartTime().getTime() + " -- " + s.getEndTime().getTime());
+            }
+        }
 
-        TimeFeature timeFeature  = new TimeFeature(schedule.getStartTime(),
-                (int)TimeUtils.calDistanceInMinutes(schedule.getStartTime().getTime(),schedule.getEndTime().getTime()),
-                schedule.getEndTime().get(Calendar.WEEK_OF_MONTH));
-
-        double[] v1 = vector(timeFeature);
-
-        System.out.println(parserVectorToFeature(v1));
-
-
-//        System.out.println(timeFeature.getStartTimeStr());
-//        double[] v4 = vector(timeFeature);
-
-
-        int a = 1;
-
-//        System.out.println("time:" + parserTimeVetor(v4 ));
-
-//        System.out.println(cosineSimilarity(v1, v2));
-
-//        System.out.println(cosineSimilarity(v1, v3));
-
-
+        System.out.println(listMap);
     }
 
 
     /**
      * 产生日程列表，既产生非空闲时间
+     *
      * @return
      */
-    public static Map<Integer,List<Schedule>> genSchedule(){
-        Map<Integer,List<Schedule>> listMap = new HashMap<Integer, List<Schedule>>(16);
+    public static Map<Integer, List<Schedule>> genSchedule() {
+        Map<Integer, List<Schedule>> listMap = new HashMap<Integer, List<Schedule>>(16);
         Calendar startCal = Calendar.getInstance();
-        startCal.set(2018,Calendar.MAY,13,8,30);
+        startCal.set(2018, Calendar.MAY, 13, 8, 30);
         Calendar endCal = Calendar.getInstance();
-        endCal.set(2018,Calendar.MAY,13,10,0);
+        endCal.set(2018, Calendar.MAY, 13, 10, 0);
 
         return listMap;
     }
@@ -71,6 +82,7 @@ public class Main {
 
     /**
      * 产生时间特征向量
+     *
      * @param timeFeature
      * @return
      */
@@ -179,6 +191,7 @@ public class Main {
 
     /**
      * 计算两个向量的相似度
+     *
      * @param vectorA
      * @param vectorB
      * @return
@@ -198,6 +211,7 @@ public class Main {
 
     /**
      * 解析时间特征向量
+     *
      * @param timeVetor
      * @return
      */
