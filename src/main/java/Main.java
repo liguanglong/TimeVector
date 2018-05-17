@@ -1,4 +1,6 @@
+import jdk.net.SocketFlow;
 import org.apache.commons.lang3.ArrayUtils;
+import sun.nio.cs.ext.IBM861;
 
 import java.awt.datatransfer.StringSelection;
 import java.sql.Time;
@@ -39,37 +41,80 @@ public class Main {
 
         testFreeTime();
 
+        Map<Integer, List<Schedule>> listMap = getNotFreeTime();
+
+
     }
 
     public static void testFreeTime() {
-//        Calendar startCal = Calendar.getInstance();
-//        startCal.set(2018, Calendar.MAY, 13, 8, 0);
-
+        
+        //星期一凌晨
         Calendar startCal = TimeUtils.getMondayAndAdd(0);
 
+        //下个星期一凌晨，这个星期天的晚上
         Calendar endCal = TimeUtils.getMondayAndAdd(7);
 
-//        endCal.set(Calendar.SECOND,1);
-
-//        System.out.println("endCal:"+endCal.getTime());
-
-//        Calendar endCal = Calendar.getInstance();
-//        endCal.set(2018, Calendar.MAY, 13, 22, 0);
 
         FreeTime freeTime = new FreeTime();
+        //星期一
         int startWeek = 0;
+        //星期天
         int endWeek = 6;
         Map<Integer, List<Schedule>> listMap = freeTime.getAllTime(startCal, endCal, startWeek,
-                endWeek, 30);
+                endWeek, 60);
 
+        int count = 0;
         for (int i = startWeek; i <= endWeek; i++) {
             List<Schedule> schedules = listMap.get(i);
             for (Schedule s : schedules) {
                 System.out.println(s.getStartTime().getTime() + " -- " + s.getEndTime().getTime());
+                count++;
             }
         }
 
+        System.out.println("AllFreeTime Count: " + count);
         System.out.println(listMap);
+    }
+
+
+    /**
+     * 获取非空闲时间
+     * @return
+     */
+    public static Map<Integer, List<Schedule>> getNotFreeTime() {
+        Map<Integer, List<Schedule>> scheduleMap = new HashMap<Integer, List<Schedule>>();
+
+        for (int i = 0; i < 7; i++) {
+            List<Schedule> schedules = new ArrayList<Schedule>();
+            Calendar start = Calendar.getInstance();
+            start.add(Calendar.DAY_OF_MONTH, i);
+            Calendar end = Calendar.getInstance();
+            end.add(Calendar.DAY_OF_MONTH, i);
+            end.add(Calendar.MINUTE, 30);
+            System.out.println("not free start time:" + start.getTime());
+            System.out.println("not free end time:" + end.getTime());
+
+            Schedule schedule = new Schedule(start, end);
+            schedules.add(schedule);
+            scheduleMap.put(i, schedules);
+        }
+        return scheduleMap;
+    }
+
+
+    /**
+     * 判断空闲时间和非空闲时间是否冲突
+     * @param freeTime
+     * @param notFreeTime
+     * @return
+     */
+    public static boolean judge(Schedule freeTime, Schedule notFreeTime) {
+        boolean res = false;
+        if(freeTime.getStartTime().before(notFreeTime.getStartTime()) ||
+                freeTime.getStartTime().before(notFreeTime.getEndTime())){
+            res = true;
+        }
+        return res;
     }
 
 
