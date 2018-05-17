@@ -8,10 +8,19 @@ public class FreeTime {
     private List<TimeFeature> timeFeatureList = new ArrayList<TimeFeature>();
 
 
+    /**
+     * 根据给定的持续时间，开始结束时间获取所有Schedule
+     *
+     * @param startTime
+     * @param endTime
+     * @param startWeek
+     * @param endWeek
+     * @param duration
+     * @return
+     */
     public Map<Integer, List<Schedule>> getAllTime(Calendar startTime, Calendar endTime, int startWeek, int endWeek, Integer duration) {
 
         Map<Integer, List<Schedule>> schedules = new HashMap<Integer, List<Schedule>>(16);
-        Integer week = startTime.get(Calendar.DAY_OF_WEEK);
 
         Calendar temp;
         for (int i = startWeek; i <= endWeek; i++) {
@@ -29,7 +38,6 @@ public class FreeTime {
                     Calendar e = (Calendar) startTime.clone();
                     Schedule s = new Schedule(st, e);
                     scheduleList.add(s);
-
                 }
             }
             schedules.put(i, scheduleList);
@@ -42,6 +50,26 @@ public class FreeTime {
         }
 
         return schedules;
+    }
+
+
+    /**
+     * 判断空闲时间和非空闲时间是否冲突
+     *
+     * @param freeTime
+     * @param notFreeTime
+     * @return
+     */
+    public boolean judge(Schedule freeTime, Schedule notFreeTime) {
+        boolean res = false;
+        System.out.println("freeTime:" + freeTime.getStartTime().getTime());
+        System.out.println("notFreeTime:" + notFreeTime.getStartTime().getTime());
+        boolean temp = (freeTime.getStartTime().before(notFreeTime.getStartTime()) && freeTime.getEndTime().after(notFreeTime.getStartTime())) ||
+                (freeTime.getStartTime().before(notFreeTime.getEndTime()) && freeTime.getEndTime().after(notFreeTime.getEndTime()));
+        if (temp) {
+            res = true;
+        }
+        return res;
     }
 
 
