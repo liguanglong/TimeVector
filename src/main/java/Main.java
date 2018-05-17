@@ -37,17 +37,7 @@ public class Main {
 //
 //        System.out.println(parserVectorToFeature(v1));
 
-
-        Integer a = 1;
-        a = 3;
-        if(a ==3){
-            System.out.println("true");
-
-        }else
-        {
-            System.out.println("false");
-        }
-//        testFreeTime();
+        testFreeTime();
 
     }
 
@@ -57,7 +47,9 @@ public class Main {
 
         Calendar startCal = TimeUtils.getMondayAndAdd(0);
 
-        Calendar endCal = TimeUtils.getMondayAndAdd(6);
+        Calendar endCal = TimeUtils.getMondayAndAdd(7);
+
+//        endCal.set(Calendar.SECOND,1);
 
 //        System.out.println("endCal:"+endCal.getTime());
 
@@ -70,7 +62,7 @@ public class Main {
         Map<Integer, List<Schedule>> listMap = freeTime.getAllTime(startCal, endCal, startWeek,
                 endWeek, 30);
 
-        for (int i = startWeek; i < endWeek; i++) {
+        for (int i = startWeek; i <= endWeek; i++) {
             List<Schedule> schedules = listMap.get(i);
             for (Schedule s : schedules) {
                 System.out.println(s.getStartTime().getTime() + " -- " + s.getEndTime().getTime());
