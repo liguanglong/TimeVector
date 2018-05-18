@@ -249,7 +249,7 @@ public class Main {
 
 
     public static void calcSimTop(double[] userPreference, Map<Integer, List<Schedule>> listMap) {
-        
+
     }
 
 
