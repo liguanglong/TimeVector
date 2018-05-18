@@ -1,10 +1,5 @@
-import jdk.net.SocketFlow;
 import org.apache.commons.lang3.ArrayUtils;
-import org.omg.PortableInterceptor.INACTIVE;
-import sun.nio.cs.ext.IBM861;
 
-import java.awt.datatransfer.StringSelection;
-import java.sql.Time;
 import java.util.*;
 
 /**
@@ -42,10 +37,9 @@ public class Main {
 
 //        testFreeTime();
 
-//        Map<Integer, List<Schedule>> listMap = getNotFreeTime();
+//        testAllFreeTime();
 
-
-        testAllFreeTime();
+        genUserPreferences();
 
 
     }
@@ -104,7 +98,6 @@ public class Main {
         getAllFreeTime(allTimeListMap, notFreeTimeListMap);
 
 
-
         for (int i = startWeek; i <= endWeek; i++) {
             List<Schedule> schedules = allTimeListMap.get(i);
             for (Schedule s : schedules) {
@@ -123,11 +116,11 @@ public class Main {
      * @param busyTime
      * @return
      */
-    public static Map<Integer, List<Schedule>> getAllFreeTime(Map<Integer, List<Schedule>> allTime, Map<Integer, List<Schedule>> busyTime) {
+    public static void getAllFreeTime(Map<Integer, List<Schedule>> allTime, Map<Integer, List<Schedule>> busyTime) {
         FreeTime freeTime = new FreeTime();
         int count = 0;
 
-        Map<Integer, List<Schedule>> listMap = new HashMap<Integer, List<Schedule>>(16);
+
         if (allTime.size() == busyTime.size()) {
             for (int i = 0; i < allTime.size(); i++) {
                 List<Schedule> busyList = busyTime.get(i);
@@ -146,7 +139,6 @@ public class Main {
 
         System.out.println("remove count:" + count);
 
-        return listMap;
     }
 
 
@@ -163,11 +155,11 @@ public class Main {
             List<Schedule> schedules = new ArrayList<Schedule>();
             Calendar endCal = (Calendar) startCal.clone();
 
-            startCal.set(Calendar.HOUR_OF_DAY,10);
+            startCal.set(Calendar.HOUR_OF_DAY, 10);
 
 
             //下个星期一凌晨，这个星期天的晚上
-            endCal.set(Calendar.HOUR_OF_DAY,10);
+            endCal.set(Calendar.HOUR_OF_DAY, 10);
 
             endCal.add(Calendar.MINUTE, 30);
 
@@ -191,19 +183,60 @@ public class Main {
     }
 
 
+    public static void genUserPreferences() {
+        List<Schedule> list = new ArrayList<Schedule>();
+        Calendar start1 = Calendar.getInstance();
+        start1.set(2018, Calendar.MAY, 18, 9, 0);
+
+        Calendar end1 = Calendar.getInstance();
+        end1.set(2018, Calendar.MAY, 18, 9, 30);
+
+        Schedule schedule1 = new Schedule(start1, end1);
+        list.add(schedule1);
+
+
+        Calendar start2 = Calendar.getInstance();
+        start2.set(2018, Calendar.MAY, 18, 9, 0);
+
+        Calendar end2 = Calendar.getInstance();
+        end2.set(2018, Calendar.MAY, 18, 9, 30);
+
+        Schedule schedule2 = new Schedule(start2, end2);
+        list.add(schedule2);
+
+        double[] res = new double[24 * 6 + 4 + 7];
+
+        for (Schedule s : list) {
+            TimeFeature feature = new TimeFeature(s.getStartTime(),
+                    (int) TimeUtils.calDistanceInMinutes(s.getStartTime().getTime(), s.getEndTime().getTime()),
+                    s.getEndTime().get(Calendar.WEEK_OF_MONTH));
+            double[] v = vector(feature);
+            System.out.println("parse:"+parserVectorToFeature(v));
+            addVetor(res, v);
+        }
+
+        System.out.println(Arrays.toString(res));
+
+    }
+
+
     /**
-     * 产生日程列表，既产生非空闲时间
+     * 计算两个向量对应位相加
      *
+     * @param a
+     * @param b
      * @return
      */
-    public static Map<Integer, List<Schedule>> genSchedule() {
-        Map<Integer, List<Schedule>> listMap = new HashMap<Integer, List<Schedule>>(16);
-        Calendar startCal = Calendar.getInstance();
-        startCal.set(2018, Calendar.MAY, 13, 8, 30);
-        Calendar endCal = Calendar.getInstance();
-        endCal.set(2018, Calendar.MAY, 13, 10, 0);
+    public static void addVetor(double[] a, double[] b) {
+        double[] c = new double[0];
+        if (a.length != b.length) {
 
-        return listMap;
+        }
+        for (int i = 0; i < a.length; i++) {
+            a[i] = a[i] + b[i];
+        }
+
+
     }
 
 
@@ -223,7 +256,7 @@ public class Main {
         /**
          * 开始时间特征向量
          * 时间粒度为10分钟
-         * 数组从零点10分开始，既数组第一个元素代表的是0点10分
+         * 数组从零点0分开始，既数组第一个元素代表的是0点0分
          */
         double[] startTimeVector = new double[24 * 6];
         String startTimeHour = "";
@@ -231,7 +264,13 @@ public class Main {
         startTimeHour = startTime.split(":")[0];
         startTimeMinute = startTime.split(":")[1];
         // 56 / 10 == 5   50 / 10 == 5
-        int startTimeMinuteIndex = Integer.parseInt(startTimeMinute) / 10 - 1;
+        int startTimeMinuteIndex;
+        if ("0".equals(startTimeMinute)) {
+            startTimeMinuteIndex = 0;
+        } else {
+            startTimeMinuteIndex = Integer.parseInt(startTimeMinute) / 10 ;
+//        startTimeMinuteIndex = Integer.parseInt(startTimeMinute) / 10 ;
+        }
 
         for (int i = 0; i < 24; i++) {
             if (i == Integer.parseInt(startTimeHour)) {
@@ -367,7 +406,8 @@ public class Main {
             startTimeHour = i / 6;
             startTimeMinuteIndex = i % 6;
         }
-        startTimeMinute = (startTimeMinuteIndex + 1) * 10;
+//        startTimeMinute = (startTimeMinuteIndex + 1) * 10;
+        startTimeMinute = (startTimeMinuteIndex ) * 10;
 
         startTime = startTimeHour + ":" + startTimeMinute;
         System.out.println("startTimeHour:" + startTimeHour);
