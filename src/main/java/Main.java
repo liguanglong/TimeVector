@@ -111,6 +111,7 @@ public class Main {
 
     /**
      * 获取所有的可用日程
+     * 直接在allTime上修改，执行完成后allTime就是所有可用的日程
      *
      * @param allTime
      * @param busyTime
@@ -183,46 +184,74 @@ public class Main {
     }
 
 
-    public static void genUserPreferences() {
+    public static double[] genUserPreferences() {
         List<Schedule> list = new ArrayList<Schedule>();
+
+
+        //20180514 星期一
+        Calendar start3 = Calendar.getInstance();
+        start3.set(2018, Calendar.MAY, 14, 9, 0);
+        System.out.println(start3.getTime());
+
+        Calendar end3 = Calendar.getInstance();
+        end3.set(2018, Calendar.MAY, 14, 9, 30);
+        System.out.println(end3.getTime());
+        Schedule schedule3 = new Schedule(start3, end3);
+        list.add(schedule3);
+
+
+        //20180518 星期五
         Calendar start1 = Calendar.getInstance();
         start1.set(2018, Calendar.MAY, 18, 9, 0);
+        System.out.println(start1.getTime());
 
         Calendar end1 = Calendar.getInstance();
-        end1.set(2018, Calendar.MAY, 18, 9, 30);
 
+        end1.set(2018, Calendar.MAY, 18, 9, 30);
+        System.out.println(end1.getTime());
         Schedule schedule1 = new Schedule(start1, end1);
         list.add(schedule1);
 
 
+        //20180519  星期六
         Calendar start2 = Calendar.getInstance();
-        start2.set(2018, Calendar.MAY, 18, 9, 0);
-
+        start2.set(2018, Calendar.MAY, 19, 9, 0);
+        System.out.println(start2.getTime());
         Calendar end2 = Calendar.getInstance();
-        end2.set(2018, Calendar.MAY, 18, 9, 30);
-
+        end2.set(2018, Calendar.MAY, 19, 9, 30);
+        System.out.println(end2.getTime());
         Schedule schedule2 = new Schedule(start2, end2);
         list.add(schedule2);
 
         double[] res = new double[24 * 6 + 4 + 7];
 
         for (Schedule s : list) {
+            /**
+             * Calendar.DAY_OF_WEEK  返回的是星期几+1
+             * 貌似设置setFirstDayOfWeek()没法用呢。。。
+             * 星期一返回2，所以要减去1
+             * 又因为后面week数组是从零开始的，所以要-2
+             */
             TimeFeature feature = new TimeFeature(s.getStartTime(),
                     (int) TimeUtils.calDistanceInMinutes(s.getStartTime().getTime(), s.getEndTime().getTime()),
-                    s.getEndTime().get(Calendar.WEEK_OF_MONTH));
+                    s.getEndTime().get(Calendar.DAY_OF_WEEK) - 2);
             double[] v = vector(feature);
-            System.out.println("parse:"+parserVectorToFeature(v));
+            System.out.println("v:" + Arrays.toString(v));
+            System.out.println("parse:" + parserVectorToFeature(v));
             addVetor(res, v);
         }
 
-        System.out.println(Arrays.toString(res));
+        System.out.println("res:" + Arrays.toString(res));
+
+        return res;
 
     }
 
 
     /**
      * 计算两个向量对应位相加
-     *
+     * 直接在把b加到a上，a就是计算后的结果
+     * 
      * @param a
      * @param b
      * @return
@@ -235,8 +264,6 @@ public class Main {
         for (int i = 0; i < a.length; i++) {
             a[i] = a[i] + b[i];
         }
-
-
     }
 
 
@@ -268,7 +295,7 @@ public class Main {
         if ("0".equals(startTimeMinute)) {
             startTimeMinuteIndex = 0;
         } else {
-            startTimeMinuteIndex = Integer.parseInt(startTimeMinute) / 10 ;
+            startTimeMinuteIndex = Integer.parseInt(startTimeMinute) / 10;
 //        startTimeMinuteIndex = Integer.parseInt(startTimeMinute) / 10 ;
         }
 
@@ -407,7 +434,7 @@ public class Main {
             startTimeMinuteIndex = i % 6;
         }
 //        startTimeMinute = (startTimeMinuteIndex + 1) * 10;
-        startTimeMinute = (startTimeMinuteIndex ) * 10;
+        startTimeMinute = (startTimeMinuteIndex) * 10;
 
         startTime = startTimeHour + ":" + startTimeMinute;
         System.out.println("startTimeHour:" + startTimeHour);
