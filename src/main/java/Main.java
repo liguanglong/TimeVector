@@ -39,7 +39,7 @@ public class Main {
 
 //        testAllFreeTime();
 
-        genUserPreferences();
+//        genUserPreferences();
 
 
     }
@@ -184,15 +184,18 @@ public class Main {
     }
 
 
+    /**
+     * 获取用户偏好，特征向量求和
+     * 目前还没有考虑加权
+     * @return
+     */
     public static double[] genUserPreferences() {
         List<Schedule> list = new ArrayList<Schedule>();
-
 
         //20180514 星期一
         Calendar start3 = Calendar.getInstance();
         start3.set(2018, Calendar.MAY, 14, 9, 0);
         System.out.println(start3.getTime());
-
         Calendar end3 = Calendar.getInstance();
         end3.set(2018, Calendar.MAY, 14, 9, 30);
         System.out.println(end3.getTime());
@@ -204,9 +207,7 @@ public class Main {
         Calendar start1 = Calendar.getInstance();
         start1.set(2018, Calendar.MAY, 18, 9, 0);
         System.out.println(start1.getTime());
-
         Calendar end1 = Calendar.getInstance();
-
         end1.set(2018, Calendar.MAY, 18, 9, 30);
         System.out.println(end1.getTime());
         Schedule schedule1 = new Schedule(start1, end1);
@@ -244,14 +245,18 @@ public class Main {
         System.out.println("res:" + Arrays.toString(res));
 
         return res;
+    }
 
+
+    public static void calcSimTop(double[] userPreference, Map<Integer, List<Schedule>> listMap) {
+        
     }
 
 
     /**
      * 计算两个向量对应位相加
      * 直接在把b加到a上，a就是计算后的结果
-     * 
+     *
      * @param a
      * @param b
      * @return
