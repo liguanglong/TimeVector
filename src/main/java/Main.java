@@ -1,4 +1,15 @@
+import com.sun.xml.internal.bind.marshaller.NoEscapeHandler;
 import org.apache.commons.lang3.ArrayUtils;
+
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
+import javax.swing.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
+
 
 import java.util.*;
 
@@ -7,6 +18,9 @@ import java.util.*;
  * @date 2018/5/5
  */
 public class Main {
+
+    private static final DateTime DATE_TIME = new DateTime();
+
 
     public static void main(String[] args) {
         /**
@@ -42,7 +56,106 @@ public class Main {
 //        genUserPreferences();
 
 
+//        Date d = new Date(1512123131321L);
+//        System.out.println(getFromat(d));
+
+
+//        Date now = new Date();
+//        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//        String s = simpleDateFormat.format(now);
+//        System.out.println(s);
+//        if (isValidDateStr(s, "yyyy-MM-dd")) {
+//            System.out.println(true);
+//        }
+
+//        DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+
+//        Date d = new Date(1512123131321L);
+
+//        DateTime dateTime = DateTime.parse("2012-12-21 23:22:45", format);
+//        DateTime dateTime = new DateTime(d);
+//        System.out.println(dateTime);
+
+        //时间格式化，输出==> 2012/12/21 23:22:45 Fri
+//        String string_u = dateTime.toString("yyyy/MM/dd HH:mm:ss");
+//        System.out.println(new DateTime(1512123131321L).toString("yyyy/MM/dd HH:mm:ss"));
+//        System.out.println(DATE_TIME.withMillis(1512123151321L).toString("yyyy/MM/dd HH:mm:ss"));
+//        System.out.println(DATE_TIME.withMillis(1512133131321L).toString("yyyy/MM/dd HH:mm:ss"));
+
+//        System.out.println(string_u);
+
+
+//        String timeFrom = "2018-05-01";
+//        String timeTo = "2018-05-20";
+//        String timeTo = null;
+//
+//        Date timeFromDate;
+//        Date timeToDate;
+//        if (timeFrom != null) {
+//            timeFromDate = DateUtils.parseStr2Date(DateUtils.YYYY_MM_DD, timeFrom);
+//        } else {
+//            timeFromDate = new Date();
+//        }
+//
+//        if (timeTo != null) {
+//            timeToDate = DateUtils.parseStr2Date(DateUtils.YYYY_MM_DD, timeTo);
+//        } else {
+//            timeToDate = new Date();
+//        }
+//
+//        System.out.println(timeFromDate);
+//
+//        System.out.println(timeToDate);
+
+
+        String time = "2018-05-23+16:15:21";
+        DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd+HH:mm:ss");
+        long timeL = DateTime.parse(time, format).getMillis();
+        System.out.println(timeL);
+
+
+
     }
+
+
+
+    public static boolean isValidDateStr(String date, String format) {
+
+        if (date == null || date.length() == 0) {
+            return false;
+        }
+
+        boolean convertSuccess = true;
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+        try {
+
+            dateFormat.setLenient(false);
+            dateFormat.parse(date);
+        } catch (ParseException e) {
+            convertSuccess = false;
+        }
+
+        return convertSuccess;
+
+    }
+
+
+
+    private static Date getFromat(Date date){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String str = simpleDateFormat.format(date);
+        System.out.println(str);
+        Date d = new Date();
+        try {
+            d =  simpleDateFormat.parse(str);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return d;
+    }
+
+
 
     public static void testFreeTime() {
 
@@ -129,7 +242,7 @@ public class Main {
                     Iterator itr = allTime.get(i).iterator();
                     while (itr.hasNext()) {
                         Schedule s = (Schedule) itr.next();
-                        if (freeTime.judge(s, busySchedule)) {
+                        if (freeTime.judgeTimeOverlap(s, busySchedule)) {
                             itr.remove();
                             count++;
                         }

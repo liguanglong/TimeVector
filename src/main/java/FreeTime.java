@@ -1,3 +1,5 @@
+import com.sun.org.glassfish.external.statistics.Statistic;
+
 import java.util.*;
 
 /**
@@ -70,6 +72,25 @@ public class FreeTime {
             res = true;
         }
         return res;
+    }
+
+
+    /**
+     * 判断两个日程是否重叠
+     * @param schedule1
+     * @param schedule2
+     * @return
+     */
+    public boolean judgeTimeOverlap(Schedule schedule1, Schedule schedule2) {
+        boolean ret;
+        //不重叠
+        if (schedule1.getEndTime().before(schedule2.getStartTime()) || schedule2.getEndTime().before(schedule1.getStartTime())) {
+            ret = false;
+        } else {
+            //重叠
+            ret = true;
+        }
+        return ret;
     }
 
 
