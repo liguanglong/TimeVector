@@ -277,7 +277,7 @@ public class DateUtils {
 
     /**
      * 判断字符串格式是否正确
-     *
+     * 不够严谨，前缀满足也会返回ture，“20180601 0601”匹配 yyyyMMdd 也会返回true
      * @param date
      * @param format
      * @return

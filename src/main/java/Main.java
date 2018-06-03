@@ -1,6 +1,9 @@
+import com.sun.corba.se.impl.logging.ORBUtilSystemException;
 import com.sun.xml.internal.bind.marshaller.NoEscapeHandler;
+import jdk.net.SocketFlow;
 import org.apache.commons.lang3.ArrayUtils;
 
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -21,13 +24,27 @@ public class Main {
 
     private static final DateTime DATE_TIME = new DateTime();
 
+    //持续时间
+    private static final Integer DURATION = 60;
+
 
     public static void main(String[] args) {
         /**
          * TimeFeature格式:(时间，持续时间，星期几)
          */
 
-//        String s1 = "1:40,30,3";
+//        testFreeTime();
+        testAllFreeTime();
+
+    }
+
+
+    public static void tes(){
+
+    }
+
+    public static void test(){
+        //        String s1 = "1:40,30,3";
 //        double[] v1 = vector(s1);
 
 //        String s2 = "1:50,30,3";
@@ -108,70 +125,97 @@ public class Main {
 //        System.out.println(timeToDate);
 
 
-        String time = "2018-05-23+16:15:21";
-        DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd+HH:mm:ss");
-        long timeL = DateTime.parse(time, format).getMillis();
-        System.out.println(timeL);
+//        String time = "2018-05-23+16:15:21";
+//        DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd+HH:mm:ss");
+//        long timeL = DateTime.parse(time, format).getMillis();
+//        System.out.println(timeL);
+
+        String startTime = "2018-05-23+16:05:05";
+        String endTime = "2018-05-24+16:05:12";
+        long startTimeL = 0;
+
+        long endTimeL = 0;
+//        if (StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)) {
+//            if(DateUtils.isValidDateStr(startTime,DateUtils.YYYY_MM_DD) &&
+//                    DateUtils.isValidDateStr(endTime,DateUtils.YYYY_MM_DD)){
+//                startTimeL = DateUtils.parseStr2Date(DateUtils.YYYY_MM_DD, startTime).getTime();
+//                endTimeL = DateUtils.parseStr2Date(DateUtils.YYYY_MM_DD, endTime).getTime();
+//            } else if(DateUtils.isValidDateStr(startTime,DateUtils.YYYY_MM_DD_HH_MM_SS) &&
+//                    DateUtils.isValidDateStr(endTime,DateUtils.YYYY_MM_DD_HH_MM_SS)){
+//                startTimeL = DateUtils.parseStr2Date(DateUtils.YYYY_MM_DD_HH_MM_SS, startTime).getTime();
+//                endTimeL = DateUtils.parseStr2Date(DateUtils.YYYY_MM_DD_HH_MM_SS, endTime).getTime();
+//            }
+//                try {
+//            if (startTimeL > endTimeL) {
+//                System.out.println("wrong");
+//            }
+//                }catch (Exception e){
+//                    System.out.println("exception");
+//                }
+//        }
+//
+//        System.out.println(startTimeL);
+//        System.out.println(endTimeL);
 
 
+//        if (StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)) {
+//            if (DateUtils.isValidDateStr(startTime, DateUtils.YYYY_MM_DD) &&
+//                    DateUtils.isValidDateStr(endTime, DateUtils.YYYY_MM_DD)) {
+//                startTimeL = DateUtils.parseStr2Date(DateUtils.YYYY_MM_DD, startTime).getTime();
+//                endTimeL = DateUtils.parseStr2Date(DateUtils.YYYY_MM_DD, endTime).getTime();
+//            } else if (startTime.contains("+") && endTime.contains("+")) {
+//                //由于前端不能传空格，传进来的空格为+，后台需处理下
+//                String startTimeF = startTime.split("\\+")[0];
+//                String startTimeB = startTime.split("\\+")[1];
+//
+//                startTime = startTimeF + " " + startTimeB;
+//
+//                String endTimeF = endTime.split("\\+")[0];
+//                String endTimeB = endTime.split("\\+")[1];
+//
+//                endTime = endTimeF + " " + endTimeB;
+//
+//                startTimeL = DateUtils.parseStr2Date(DateUtils.YYYY_MM_DD_HH_MM_SS, startTime).getTime();
+//                endTimeL = DateUtils.parseStr2Date(DateUtils.YYYY_MM_DD_HH_MM_SS, endTime).getTime();
+//            }
+//
+//
+//            System.out.println(startTime);
+//        }
 
+
+        String timeFrom = "20180506 0612";
+        if (DateUtils.isValidDateStr(timeFrom, DateUtils.YYYYMMDD)) {
+            System.out.println("true");
+        }
     }
 
 
-
-    public static boolean isValidDateStr(String date, String format) {
-
-        if (date == null || date.length() == 0) {
-            return false;
-        }
-
-        boolean convertSuccess = true;
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat(format);
-        try {
-
-            dateFormat.setLenient(false);
-            dateFormat.parse(date);
-        } catch (ParseException e) {
-            convertSuccess = false;
-        }
-
-        return convertSuccess;
-
-    }
-
-
-
-    private static Date getFromat(Date date){
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String str = simpleDateFormat.format(date);
-        System.out.println(str);
-        Date d = new Date();
-        try {
-            d =  simpleDateFormat.parse(str);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return d;
-    }
-
-
-
+    /**
+     * 测试一个星期内的获取全部时间
+     *
+     */
     public static void testFreeTime() {
 
-        //星期一凌晨
+        /**设置开始时间，结束时间，开始星期几，结束星期几，持续时间*/
+
+        //星期一凌晨（开始时间）
         Calendar startCal = TimeUtils.getMondayAndAdd(0);
 
-        //下个星期一凌晨，这个星期天的晚上
+        //下个星期一凌晨，这个星期天的晚上（结束时间）
         Calendar endCal = TimeUtils.getMondayAndAdd(7);
 
         FreeTime freeTime = new FreeTime();
-        //星期一
+        //星期一（开始星期几）
         int startWeek = 0;
-        //星期天
+        //星期天（结束星期几）
         int endWeek = 6;
+
+        //持续时间
+
+
         Map<Integer, List<Schedule>> listMap = freeTime.getAllTime(startCal, endCal, startWeek,
-                endWeek, 60);
+                endWeek, DURATION);
 
         int count = 0;
         for (int i = startWeek; i <= endWeek; i++) {
@@ -199,8 +243,9 @@ public class Main {
         int startWeek = 0;
         //星期天
         int endWeek = 6;
+
         Map<Integer, List<Schedule>> allTimeListMap = freeTime.getAllTime(startCal, endCal, startWeek,
-                endWeek, 60);
+                endWeek, DURATION);
 
         System.out.println("allTimeListMapSize:" + allTimeListMap.size() * allTimeListMap.get(0).size());
 
@@ -235,6 +280,7 @@ public class Main {
         int count = 0;
 
 
+        //由于allTime 和busyTime 都是map对象，比较size是为了比较天数是不是一样，不然没法比较，一般为7，既一个星期
         if (allTime.size() == busyTime.size()) {
             for (int i = 0; i < allTime.size(); i++) {
                 List<Schedule> busyList = busyTime.get(i);
@@ -242,7 +288,7 @@ public class Main {
                     Iterator itr = allTime.get(i).iterator();
                     while (itr.hasNext()) {
                         Schedule s = (Schedule) itr.next();
-                        if (freeTime.judgeTimeOverlap(s, busySchedule)) {
+                        if (freeTime.judgeTimeOverlapByMills(s, busySchedule)) {
                             itr.remove();
                             count++;
                         }

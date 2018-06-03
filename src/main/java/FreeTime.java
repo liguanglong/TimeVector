@@ -94,4 +94,30 @@ public class FreeTime {
     }
 
 
+    /**
+     *
+     * @param schedule1
+     * @param schedule2
+     * @return
+     */
+    public boolean judgeTimeOverlapByMills(Schedule schedule1, Schedule schedule2) {
+        boolean ret;
+        //不重叠
+        if (schedule1.getEndTime().getTimeInMillis()<= schedule2.getStartTime().getTimeInMillis() ||
+                schedule2.getEndTime().getTimeInMillis()<= schedule1.getStartTime().getTimeInMillis()) {
+            ret = false;
+        } else {
+            //重叠
+            ret = true;
+//            System.out.println("s1.start:"+schedule1.getStartTime().getTimeInMillis());
+//            System.out.println("s1.end:"+schedule1.getEndTime().getTimeInMillis());
+//            System.out.println("s2.start:"+schedule2.getStartTime().getTimeInMillis());
+//            System.out.println("s2.end:"+schedule2.getEndTime().getTimeInMillis());
+//            System.out.println("***");
+        }
+        return ret;
+    }
+
+
+
 }

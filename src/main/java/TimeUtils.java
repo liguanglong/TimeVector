@@ -63,6 +63,7 @@ public class TimeUtils {
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND,0);
         calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
         calendar.add(Calendar.DAY_OF_YEAR, n );
         return calendar;
