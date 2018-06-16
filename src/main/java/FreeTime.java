@@ -35,7 +35,7 @@ public class FreeTime {
 //                System.out.println("beforeCalc:"+startTime.getTime());
                 startTime.add(Calendar.MINUTE, duration);
 //                System.out.println("afterCalc:"+startTime.getTime());
-                if (startTime.before(endTime)) {
+                if (startTime.getTimeInMillis()<=endTime.getTimeInMillis()) {
                     Calendar st = (Calendar) temp.clone();
                     Calendar e = (Calendar) startTime.clone();
                     Schedule s = new Schedule(st, e);
@@ -47,8 +47,8 @@ public class FreeTime {
             startTime.add(Calendar.DAY_OF_MONTH, 1);
 //            endTime.add(Calendar.DAY_OF_MONTH,1);
 
-            System.out.println("reset" + startTime.getTime());
-            System.out.println("rsset" + endTime.getTime());
+//            System.out.println("startTime:" + startTime.getTime());
+//            System.out.println("endTime:" + endTime.getTime());
         }
 
         return schedules;
@@ -95,7 +95,7 @@ public class FreeTime {
 
 
     /**
-     *
+     *  通过毫秒数比较schedule是否重叠，因为Date.before()不支持等于判断
      * @param schedule1
      * @param schedule2
      * @return

@@ -13,7 +13,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 
-
 import java.util.*;
 
 /**
@@ -33,17 +32,10 @@ public class Main {
          * TimeFeature格式:(时间，持续时间，星期几)
          */
 
-//        testFreeTime();
-        testAllFreeTime();
-
+        testCalcSimTop();
     }
 
-
-    public static void tes(){
-
-    }
-
-    public static void test(){
+    public static void test() {
         //        String s1 = "1:40,30,3";
 //        double[] v1 = vector(s1);
 
@@ -193,7 +185,6 @@ public class Main {
 
     /**
      * 测试一个星期内的获取全部时间
-     *
      */
     public static void testFreeTime() {
 
@@ -231,7 +222,11 @@ public class Main {
     }
 
 
-    public static void testAllFreeTime() {
+    /**
+     * 测试一个星期内的所有空闲时间，既全部时间去除非空闲时间
+     */
+    public static Map<Integer, List<Schedule>> testAllFreeTime() {
+
         //星期一凌晨
         Calendar startCal = TimeUtils.getMondayAndAdd(0);
 
@@ -249,21 +244,24 @@ public class Main {
 
         System.out.println("allTimeListMapSize:" + allTimeListMap.size() * allTimeListMap.get(0).size());
 
-        Map<Integer, List<Schedule>> notFreeTimeListMap = getNotFreeTime();
+//        Map<Integer, List<Schedule>> notFreeTimeListMap = getNotFreeTime();
+        Map<Integer, List<Schedule>> notFreeTimeListMap = getNotFreeTimeByAdd();
 
-        System.out.println("notFreeTimeListMapSize:" + notFreeTimeListMap.size() * notFreeTimeListMap.get(0).size());
+//        System.out.println("notFreeTimeListMapSize:" + notFreeTimeListMap.size() * notFreeTimeListMap.get(0).size());
+
+        System.out.println("notFreeTimeListMapSize:" + notFreeTimeListMap.size());
 
         getAllFreeTime(allTimeListMap, notFreeTimeListMap);
 
 
-        for (int i = startWeek; i <= endWeek; i++) {
-            List<Schedule> schedules = allTimeListMap.get(i);
-            for (Schedule s : schedules) {
-                System.out.println(s.getStartTime().getTime() + " -*- " + s.getEndTime().getTime());
-            }
-        }
+//        for (int i = startWeek; i <= endWeek; i++) {
+//            List<Schedule> schedules = allTimeListMap.get(i);
+//            for (Schedule s : schedules) {
+//                System.out.println(s.getStartTime().getTime() + " -*- " + s.getEndTime().getTime());
+//            }
+//        }
 
-
+        return allTimeListMap;
     }
 
 
@@ -281,21 +279,29 @@ public class Main {
 
 
         //由于allTime 和busyTime 都是map对象，比较size是为了比较天数是不是一样，不然没法比较，一般为7，既一个星期
-        if (allTime.size() == busyTime.size()) {
-            for (int i = 0; i < allTime.size(); i++) {
-                List<Schedule> busyList = busyTime.get(i);
-                for (Schedule busySchedule : busyList) {
-                    Iterator itr = allTime.get(i).iterator();
-                    while (itr.hasNext()) {
-                        Schedule s = (Schedule) itr.next();
-                        if (freeTime.judgeTimeOverlapByMills(s, busySchedule)) {
-                            itr.remove();
-                            count++;
-                        }
+
+//        if (allTime.size() == busyTime.size()) {
+        for (int i = 0; i < allTime.size(); i++) {
+            /**
+             * 当然allTime和busyTime的size也可以不相等，但是要保证map的key要对应一致
+             *
+             */
+            if (busyTime.size() <= i) {
+                break;
+            }
+            List<Schedule> busyList = busyTime.get(i);
+            for (Schedule busySchedule : busyList) {
+                Iterator itr = allTime.get(i).iterator();
+                while (itr.hasNext()) {
+                    Schedule s = (Schedule) itr.next();
+                    if (freeTime.judgeTimeOverlapByMills(s, busySchedule)) {
+                        itr.remove();
+                        count++;
                     }
                 }
             }
         }
+//        }
 
         System.out.println("remove count:" + count);
 
@@ -303,7 +309,7 @@ public class Main {
 
 
     /**
-     * 获取非空闲时间
+     * 模拟测试-获取一个星期内每天固定时间段的非空闲时间
      *
      * @return
      */
@@ -344,8 +350,52 @@ public class Main {
 
 
     /**
+     * 模拟测试-获取**自定义**非空闲时间
+     *
+     * @return
+     */
+    public static Map<Integer, List<Schedule>> getNotFreeTimeByAdd() {
+        Map<Integer, List<Schedule>> scheduleMap = new HashMap<Integer, List<Schedule>>();
+
+        List<Schedule> schedules = new ArrayList<Schedule>();
+
+        //第一个
+        Calendar startCal1 = TimeUtils.getMondayAndAdd(0);
+        Calendar endCal1 = (Calendar) startCal1.clone();
+        startCal1.set(Calendar.HOUR_OF_DAY, 10);
+        endCal1.set(Calendar.HOUR_OF_DAY, 10);
+        endCal1.add(Calendar.MINUTE, 30);
+
+        System.out.println("not free start time:" + startCal1.getTime());
+        System.out.println("not free end time:" + endCal1.getTime());
+
+        Schedule schedule1 = new Schedule((Calendar) startCal1.clone(), (Calendar) endCal1.clone());
+        schedules.add(schedule1);
+        scheduleMap.put(0, schedules);
+
+
+        //第二个
+        Calendar startCal2 = TimeUtils.getMondayAndAdd(1);
+        Calendar endCal2 = (Calendar) startCal2.clone();
+        startCal2.set(Calendar.HOUR_OF_DAY, 15);
+        endCal2.set(Calendar.HOUR_OF_DAY, 15);
+        endCal2.add(Calendar.MINUTE, 30);
+
+        System.out.println("not free start time:" + startCal2.getTime());
+        System.out.println("not free end time:" + endCal2.getTime());
+
+        Schedule schedule2 = new Schedule((Calendar) startCal2.clone(), (Calendar) endCal2.clone());
+        schedules.add(schedule2);
+        scheduleMap.put(1, schedules);
+
+        return scheduleMap;
+    }
+
+
+    /**
      * 获取用户偏好，特征向量求和
      * 目前还没有考虑加权
+     *
      * @return
      */
     public static double[] genUserPreferences() {
@@ -356,7 +406,7 @@ public class Main {
         start3.set(2018, Calendar.MAY, 14, 9, 0);
         System.out.println(start3.getTime());
         Calendar end3 = Calendar.getInstance();
-        end3.set(2018, Calendar.MAY, 14, 9, 30);
+        end3.set(2018, Calendar.MAY, 14, 9, 50);
         System.out.println(end3.getTime());
         Schedule schedule3 = new Schedule(start3, end3);
         list.add(schedule3);
@@ -396,7 +446,7 @@ public class Main {
                     (int) TimeUtils.calDistanceInMinutes(s.getStartTime().getTime(), s.getEndTime().getTime()),
                     s.getEndTime().get(Calendar.DAY_OF_WEEK) - 2);
             double[] v = vector(feature);
-            System.out.println("v:" + Arrays.toString(v));
+//            System.out.println("v:" + Arrays.toString(v));
             System.out.println("parse:" + parserVectorToFeature(v));
             addVetor(res, v);
         }
@@ -407,7 +457,60 @@ public class Main {
     }
 
 
+    /**
+     * 测试计算top1的相似度
+     */
+    public static void testCalcSimTop() {
+        Map<Integer, List<Schedule>> a = testAllFreeTime();
+
+        calcSimTop(genUserPreferences(), a);
+    }
+
+
+    /**
+     * 计算相似度最高的一个日程
+     *
+     * @param userPreference
+     * @param listMap
+     */
     public static void calcSimTop(double[] userPreference, Map<Integer, List<Schedule>> listMap) {
+
+        double maxSim = 0;
+        Schedule maxSimSchedule = null;
+        for (int i = 0; i <= 6; i++) {
+            List<Schedule> schedules = listMap.get(i);
+            for (Schedule s : schedules) {
+                //获取每个空闲schedule的向量
+                System.out.println(s.getEndTime().getTime());
+                TimeFeature feature = new TimeFeature(s.getStartTime(),
+                        (int) TimeUtils.calDistanceInMinutes(s.getStartTime().getTime(), s.getEndTime().getTime()),
+                        s.getEndTime().get(Calendar.DAY_OF_WEEK) - 2);
+
+                //Calendar.DAY_OF_WEEK
+                if(s.getEndTime().get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY){
+                    feature = new TimeFeature(s.getStartTime(),
+                            (int) TimeUtils.calDistanceInMinutes(s.getStartTime().getTime(), s.getEndTime().getTime()),
+                            s.getEndTime().get(Calendar.DAY_OF_WEEK)+5);
+                }
+
+
+                double[] v = vector(feature);
+
+
+                //计算相似度
+                double sim = cosineSimilarity(userPreference, v);
+
+                System.out.println("sim:" + sim);
+                System.out.println("*****************************************************************");
+                if (sim > maxSim) {
+                    maxSim = sim;
+                    maxSimSchedule = s;
+                    System.out.println("||||||||"+feature.getStartTime().getTime());
+                }
+            }
+        }
+        System.out.println(maxSim);
+        System.out.println(maxSimSchedule.getStartTime().getTime());
 
     }
 
@@ -423,7 +526,7 @@ public class Main {
     public static void addVetor(double[] a, double[] b) {
         double[] c = new double[0];
         if (a.length != b.length) {
-
+            return;
         }
         for (int i = 0; i < a.length; i++) {
             a[i] = a[i] + b[i];
@@ -479,8 +582,8 @@ public class Main {
             }
         }
 
-        System.out.println("startTime:");
-        System.out.println(Arrays.toString(startTimeVector));
+        System.out.println("startTime-num:" + startTimeHour);
+        System.out.println("startTime-vetor:" + Arrays.toString(startTimeVector));
 
         /**
          * 持续时间
@@ -499,7 +602,8 @@ public class Main {
             durationVetor[3] = 1;
         }
 
-        System.out.println("duration:" + Arrays.toString(durationVetor));
+        System.out.println("duration-num:" + duration);
+        System.out.println("duration-vector:" + Arrays.toString(durationVetor));
 
 
         /**
@@ -533,14 +637,15 @@ public class Main {
             default:
         }
 
-        System.out.println("week" + Arrays.toString(weekVetor));
+        System.out.println("week-num:" + week);
+        System.out.println("week-vector:" + Arrays.toString(weekVetor));
+
 
         //拼接数组
         result = ArrayUtils.addAll(startTimeVector, durationVetor);
         result = ArrayUtils.addAll(result, weekVetor);
 
         System.out.println(Arrays.toString(result));
-
 
         return result;
     }
