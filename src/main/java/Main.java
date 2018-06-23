@@ -487,10 +487,10 @@ public class Main {
                         s.getEndTime().get(Calendar.DAY_OF_WEEK) - 2);
 
                 //Calendar.DAY_OF_WEEK中星期天返回1，既星期天是一周的第一天，符合中国时间，需要特殊处理，在这里加5，既6代表星期天
-                if(s.getEndTime().get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY){
+                if (s.getEndTime().get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
                     feature = new TimeFeature(s.getStartTime(),
                             (int) TimeUtils.calDistanceInMinutes(s.getStartTime().getTime(), s.getEndTime().getTime()),
-                            s.getEndTime().get(Calendar.DAY_OF_WEEK)+5);
+                            s.getEndTime().get(Calendar.DAY_OF_WEEK) + 5);
                 }
 
 
@@ -505,7 +505,7 @@ public class Main {
                 if (sim > maxSim) {
                     maxSim = sim;
                     maxSimSchedule = s;
-                    System.out.println("||||||||"+feature.getStartTime().getTime());
+                    System.out.println("||||||||" + feature.getStartTime().getTime());
                 }
             }
         }
